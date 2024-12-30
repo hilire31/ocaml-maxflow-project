@@ -1,8 +1,9 @@
-open Gfile
-    
+open Gfile   
+open Tools
+open Ff
 let () =
 
-  (* Check the number of command-line arguments *)
+  (* Check the number of command-line arguments /open Parcours*)
   if Array.length Sys.argv <> 5 then
     begin
       Printf.printf
@@ -24,12 +25,19 @@ let () =
   and _source = int_of_string Sys.argv.(2)
   and _sink = int_of_string Sys.argv.(3)
   in
+(*
+  let test_path = profondeur int_graph 0 12 [0] [0] in
+  print_list test_path ;
+  let min = (min_from_path (extract_arcs(path_from_node_list int_graph test_path))) in
+  let new_graph = decrease_path int_graph (extract_arcs(path_from_node_list int_graph test_path)) min in
+*)
 
   (* Open file *)
   let graph = from_file infile in
-
-  (* Rewrite the graph that has been read. *)
-  let () = write_file outfile graph in
-
+  let int_graph = add_arc (gmap graph (int_of_string )) 4 10 (0) in
+  let new_graph = init int_graph 0 12 in
+  let modified_graph = gmap new_graph (string_of_int) in 
+  let () = export (outfile^".dot") modified_graph in
+  let _step_graph = recursion new_graph 0 12 2 2 in
   ()
 

@@ -112,3 +112,42 @@ let from_file path =
   close_in infile ;
   final_graph
   
+
+
+
+
+
+let export path graph=
+
+  let ff = open_out path in
+
+  (* Write in this file. *)
+  fprintf ff "digraph finite_state_machine {\n
+	fontname=\"Helvetica,Arial,sans-serif\"\n
+	node [fontname=\"Helvetica,Arial,sans-serif\"]\n
+	edge [fontname=\"Helvetica,Arial,sans-serif\"]\n
+	rankdir=LR;\n
+  node [shape = doublecircle]; 0 12;\n
+  node [shape = circle];\n" ;
+
+  
+
+  (* Write all arcs *)
+  let _ = e_fold graph (fun count arc -> fprintf ff "%d -> %d [label = \"%s\"];" arc.src arc.tgt arc.lbl ; count + 1) 0 in
+  
+  fprintf ff "}\n" ;
+  
+  close_out ff ;
+  ()
+
+
+
+
+
+
+
+
+
+
+
+
