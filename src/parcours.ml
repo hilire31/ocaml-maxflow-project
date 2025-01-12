@@ -1,8 +1,9 @@
 
 open Graph
 
-let rec print_list node_list = match node_list with
-  |x::rest->Printf.printf "%d/%!" x;print_list rest;(*%! = flush comme en JAVA ? à chercher*)
+let rec print_list node_list = 
+  match node_list with
+  |x::rest->Printf.printf "%d\t%!" x;print_list rest;(*%! = flush comme en JAVA ? à chercher*)
   |[]->Printf.printf "fin%!";;
 
 
