@@ -23,15 +23,18 @@ let rec recursion graphe source target step flow=
   let next_flow = (flow+min) in
   Printf.printf "flow step %d = %d\n%!" step next_flow;
   recursion step_graph source target (step+1) next_flow;;
-(*
-  let fordfulkerson graphe source target = 
-init graphe source target in
-recursion graphe source target;;
-*)
+
+(* 
+
+val m_step : int list graph -> int -> int -> int -> int list -> int -> int list -> int list
+
+let m_step graphe src tgt n ordre step contexte = 
+  let m_min = m_find_min_at_n 0 (extract_arcs (path_from_node_list graphe (m_profondeur graphe src tgt [src] [tgt] n))) in
+  b_pivot contexte m_min.lbl ordre step ;;
 
 
 
-
+*) 
 
 
 

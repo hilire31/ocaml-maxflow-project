@@ -116,8 +116,6 @@ let b_pivot contexte contrainte ordre step =
   in
   let n = index_of_zero ordre in 
   let pivot = List.nth contrainte n in
-  
-  Printf.printf "\n pivot : %d%!" pivot;
   let rec ajuster_contexte idx nov_contexte =
     match idx with
     | x when x >= List.length contexte -> List.rev nov_contexte (* Fin de la liste *)
@@ -129,8 +127,6 @@ let b_pivot contexte contrainte ordre step =
       let nouveau_val =
         if index_val = step then (* Cas du pivot *)
           let m = min contexte_val contrainte_val in
-          Printf.printf "\n m : %d%!" m;
-          Printf.printf "\n index_val : %d%!" index_val;
           m
         else if (index_val <> step && contrainte_val <> 0) then (* Autres cas *)
           min contexte_val ((List.hd (List.rev contrainte)) - pivot)
