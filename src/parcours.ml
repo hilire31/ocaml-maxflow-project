@@ -16,8 +16,14 @@ let difference_not_empty lst1 lst2 =
 
 let next_nodes graphe current = (List.map (fun arc -> arc.tgt) (List.filter (fun x -> x.lbl > 0) (out_arcs graphe current)));;
 
+let m_next_nodes graphe current n = (List.map (fun arc -> arc.tgt) (List.filter (fun x -> (List.nth x.lbl n) > 0) (out_arcs graphe current)));;
+
 
 let choose_next graphe current lvoisin = let lnext = difference (next_nodes graphe current) lvoisin in match lnext with 
+|[]->failwith "erreur choose";
+|x::_->x;;
+
+let m_choose_next graphe current lvoisin n = let lnext = difference (m_next_nodes graphe current n) lvoisin in match lnext with 
 |[]->failwith "erreur choose";
 |x::_->x;;
 
@@ -34,7 +40,18 @@ let rec profondeur (graphe : int graph) (current : id) (target : id) (pathstack 
 
 ;;
 
+let rec m_profondeur (graphe : int list graph) (current : id) (target : id) (pathstack : id list) (visited : id list) (n : int): id list =  match (pathstack,visited) with
+  |(p::_,_) when (p = target) -> List.rev pathstack
+  |([],__)->[]
+  |(p::prest,v) when (difference_not_empty (m_next_nodes graphe current n) v) -> let nx = m_choose_next graphe current v n in m_profondeur graphe nx target (nx::p::prest) (nx::v) n
+  |(_::prest,v) when (not ((difference_not_empty (m_next_nodes graphe current n) v)) && (prest = [])) ->[]
 
+  |(_::pp::prest,v) when not (difference_not_empty (m_next_nodes graphe current n) v) -> m_profondeur graphe pp target (pp::prest) v n
+  |(_,_)->failwith "erreur profondeur"
+  
+
+
+;;
 
 
 

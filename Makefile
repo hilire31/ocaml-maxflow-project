@@ -5,7 +5,7 @@ IMAGES=$(SOURCES:.dot=.svg)
 
 src?=0
 dst?=5
-graph?=graph2.txt
+graph?=graphtest.txt
 
 all: build
 

@@ -57,7 +57,7 @@ let rec m_resolve lst1 lst2 =
 (* Additionne deux listes d'entiers élément par élément *)
   match (lst1, lst2) with
   | [], [] -> []
-  | x::xs, y::ys -> (x + y) :: m_resolve xs ys
+  | x::xs, y::ys -> (x - y) :: m_resolve xs ys
   | [], y::ys -> y :: m_resolve [] ys  (* Si une liste est plus longue *)
   | x::xs, [] -> x :: m_resolve xs []  (* que l'autre, on la conserve *)
   ;;
@@ -69,16 +69,13 @@ let m_add_arc g id1 id2 label = match find_arc g id1 id2 with
 let m_inf n list1 list2 =
   nth_element n list1 < nth_element n list2;;
 
-(*let rec m_min_from_path n path =
-  match path with
-  | [] -> failwith "Empty path: no minimum value"
-  | [x] when ((nth_element n x.lbl)<>0) -> x.lbl 
-  | x :: rest ->
-      let min_rest = m_min_from_path n rest in
-      if (m_inf n x.lbl min_rest && (nth_element n x.lbl)<>0) then x.lbl else min_rest
-;;*)  
 
+let m_decrease_arc graphe arc contexte = let new_graphe = m_add_arc graphe arc.src arc.tgt contexte in
+m_add_arc new_graphe arc.tgt arc.src contexte;;
 
+let rec m_decrease_path graphe path min = match (graphe,path) with
+|(g,a::prest)->let new_graph = m_decrease_arc g a min in m_decrease_path new_graph prest min;
+|(g,[])->g;;
 
 
 (* Convertit une chaîne de caractères en une liste d'entiers *)
@@ -106,19 +103,7 @@ let rec m_find_min_at_n n arcs =
       if (List.nth x.lbl n < List.nth min_rest.lbl n && (List.nth x.lbl n) > 0) then x
       else min_rest;;
 
-(*
-let t_pivot contexte contrainte ordre step = 
 
-  let n = List.nth ordre step in
-  let piv = List.nth contrainte n in 
-  let rec recursion acu nov_contexte = 
-    match ordre with
-    |[]->nov_contexte
-    |x::rest when (acu == n) -> recursion (acu + 1) (min (List.nth contexte x) (List.nth contrainte x))::nov_contexte
-    |x::rest when (acu <> n) -> recursion (acu + 1) (min (List.nth contexte x) ((List.hd (List.rev contrainte)) - List.nth contrainte n))::nov_contexte
-  in
-  recursion 0 [66];;
-*)
 let b_pivot contexte contrainte ordre step =
   (* Obtenir le pivot *)
   (* Fonction récursive pour ajuster le contexte *)
@@ -167,12 +152,10 @@ let rec drop n lst =
   | _ -> lst;;  (* Retourner le reste de la liste une fois \( n \) atteint *)
 
 
-let rearrange lst indices =
-  (* Fonction auxiliaire pour récupérer un élément par son index *)
-  let rec get_at_index lst idx =
-    match lst with
-    | [] -> failwith "Index out of bounds"
-    | x :: rest -> if idx = 0 then x else get_at_index rest (idx - 1)
-  in
-  (* Appliquer l'ordre donné par indices *)
-  List.map (fun i -> get_at_index lst i) indices;;
+let my_string_to_int_list s =
+  (* Sépare la chaîne en une liste de sous-chaînes en utilisant ',' comme délimiteur *)
+  let string_list = String.split_on_char ',' s in
+  (* Convertit chaque sous-chaîne en entier *)
+  List.map int_of_string string_list
+;;
+  
