@@ -81,11 +81,11 @@ let m_inf n list1 list2 =
   nth_element n list1 < nth_element n list2;;
 
 
-let m_decrease_arc graphe arc min n flux = let new_graphe = m_add_arc graphe arc.src arc.tgt (m_add_to_nth flux (-min) (m_add_to_nth n (-min) (lst_vide n))) in
-m_add_arc new_graphe arc.tgt arc.src (m_add_to_nth flux (-min) (m_add_to_nth n (-min) (lst_vide n)));;
+let m_decrease_arc graphe arc min number_of_flux step = let new_graphe = m_add_arc graphe arc.src arc.tgt (m_add_to_nth step (-min) (m_add_to_nth (number_of_flux+1) (-min) (lst_vide (number_of_flux+1)))) in
+m_add_arc new_graphe arc.tgt arc.src (m_add_to_nth step (-min) (m_add_to_nth number_of_flux (-min) (lst_vide number_of_flux)));;
 
-let rec m_decrease_path graphe path min n flux= match (graphe,path) with
-|(g,a::prest)->let new_graph = m_decrease_arc g a min n flux in m_decrease_path new_graph prest min n flux;
+let rec m_decrease_path graphe path min number_of_flux step = match (graphe,path) with
+|(g,a::prest)->let new_graph = m_decrease_arc g a min number_of_flux step in m_decrease_path new_graph prest min number_of_flux step;
 |(g,[])->g;;
 
 
@@ -99,10 +99,10 @@ let string_to_int_list str =
 let rec t_find_min_at_n n lists =
   match lists with
   | [] -> failwith "La liste est vide, aucun minimum à trouver."
-  | [x] -> x  (* Si une seule liste reste, c'est la minimum par défaut *)
+  | [x] -> List.nth x n  (* Si une seule liste reste, c'est la minimum par défaut *)
   | x :: rest ->
       let min_rest = t_find_min_at_n n rest in
-      if (List.nth x n < List.nth min_rest n && (List.nth x n) > 0 ) then x
+      if (List.nth x n < min_rest n && (List.nth x n) > 0 ) then List.nth x n
       else min_rest;;
 
 let rec m_find_min_at_n n arcs =
@@ -115,41 +115,7 @@ let rec m_find_min_at_n n arcs =
       else min_rest;;
 
 
-let b_pivot contexte contrainte ordre step =
-  (* Obtenir le pivot *)
-  (* Fonction récursive pour ajuster le contexte *)
-  let index_of_zero lst =
-    let rec aux idx = function
-      | [] -> failwith "Aucun zéro trouvé dans la liste." (* Exception si aucun 0 *)
-      | x :: rest -> if x = 0 then idx else aux (idx + 1) rest
-    in
-    aux 0 lst
-  in
-  let n = index_of_zero ordre in 
-  let pivot = List.nth contrainte n in
-  let rec ajuster_contexte idx nov_contexte =
-    match idx with
-    | x when x >= List.length contexte -> List.rev nov_contexte (* Fin de la liste *)
-    | x ->
-      
-      let contexte_val = List.nth contexte x in
-      let contrainte_val = List.nth contrainte x in
-      let index_val = List.nth ordre x in
-      let nouveau_val =
-        if index_val = step then (* Cas du pivot *)
-          let m = min contexte_val contrainte_val in
-          m
-        else if (index_val <> step && contrainte_val <> 0) then (* Autres cas *)
-          min contexte_val ((List.hd (List.rev contrainte)) - pivot)
-        else 
-          contexte_val
-      in
-      ajuster_contexte (x + 1) (nouveau_val :: nov_contexte)
-  in
 
-  (* Lancer la récursion depuis l'indice 0 *)
-  ajuster_contexte 0 []
-;;
 
 
 let rec drop n lst =

@@ -59,9 +59,10 @@ let m_int_graph = gmap graph (my_string_to_int_list) in
 Printf.printf "test path : \t%!";(*
 *)
 let m_min = m_find_min_at_n 0 (extract_arcs (path_from_node_list m_int_graph (m_profondeur m_int_graph 0 3 [0] [0] 0))) in
+let m_path = extract_arcs (path_from_node_list m_int_graph (m_profondeur m_int_graph 0 3 [0] [0] 0)) in
 let ordre = [0;1;2] in
 let step = 0 in 
-let contexte = b_pivot [8;8;8] m_min.lbl ordre step in
+let nov_graphe = m_decrease_path m_int_graph m_path m_min 3 0 in  
 print_list contexte;
 Printf.printf("\n%!");
 

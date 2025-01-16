@@ -14,7 +14,7 @@ val extract_arcs : 'id arc option list -> 'id arc list
 val m_add_arc: int list graph -> id -> id -> int list -> int list graph
 val m_resolve : int list -> int list -> int list
 
-val m_decrease_path : int list graph -> int list arc list -> int list -> int list graph
+val m_decrease_path : int list graph -> int list arc list -> int -> int -> int -> int list graph
 
 val m_inf : int -> int list -> int list -> bool
 val string_to_int_list : string -> int list
@@ -25,5 +25,5 @@ val m_find_min_at_n : int -> int list arc list -> int list arc
 val drop : int -> 'a list -> 'a list
 
 
-val b_pivot : int list -> int list -> int list -> int -> int list
+
 val my_string_to_int_list : string -> int list
