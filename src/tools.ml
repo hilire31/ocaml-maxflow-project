@@ -57,24 +57,35 @@ let rec m_resolve lst1 lst2 =
 (* Additionne deux listes d'entiers élément par élément *)
   match (lst1, lst2) with
   | [], [] -> []
-  | x::xs, y::ys -> (x - y) :: m_resolve xs ys
+  | x::xs, y::ys -> (x + y) :: m_resolve xs ys
   | [], y::ys -> y :: m_resolve [] ys  (* Si une liste est plus longue *)
   | x::xs, [] -> x :: m_resolve xs []  (* que l'autre, on la conserve *)
   ;;
-
-let m_add_arc g id1 id2 label = match find_arc g id1 id2 with
-  |None -> new_arc g  { src = id1; tgt = id2; lbl = label }
-  |Some a-> new_arc g  { src = id1; tgt = id2; lbl = (m_resolve label a.lbl)};;
+  let rec m_add_to_nth n k lst =
+    match lst with
+    | [] -> failwith "Index out of bounds" (* Si la liste est vide ou si l'index dépasse la taille *)
+    | x :: xs -> 
+        if n = 0 then (x + k) :: xs (* Ajouter k au premier élément *)
+        else x :: m_add_to_nth (n - 1) k xs (* Continuer à parcourir la liste *)
+  ;;
+  let rec lst_vide n = match n with
+    |0->[]
+    |_->0::lst_vide (n-1);;
+  
+  
+  let m_add_arc g id1 id2 lst = match find_arc g id1 id2 with
+    |None -> new_arc g  { src = id1; tgt = id2; lbl = lst }
+    |Some a-> new_arc g  { src = id1; tgt = id2; lbl = (m_resolve lst a.lbl)};;
 
 let m_inf n list1 list2 =
   nth_element n list1 < nth_element n list2;;
 
 
-let m_decrease_arc graphe arc contexte = let new_graphe = m_add_arc graphe arc.src arc.tgt contexte in
-m_add_arc new_graphe arc.tgt arc.src contexte;;
+let m_decrease_arc graphe arc min n flux = let new_graphe = m_add_arc graphe arc.src arc.tgt (m_add_to_nth flux (-min) (m_add_to_nth n (-min) (lst_vide n))) in
+m_add_arc new_graphe arc.tgt arc.src (m_add_to_nth flux (-min) (m_add_to_nth n (-min) (lst_vide n)));;
 
-let rec m_decrease_path graphe path min = match (graphe,path) with
-|(g,a::prest)->let new_graph = m_decrease_arc g a min in m_decrease_path new_graph prest min;
+let rec m_decrease_path graphe path min n flux= match (graphe,path) with
+|(g,a::prest)->let new_graph = m_decrease_arc g a min n flux in m_decrease_path new_graph prest min n flux;
 |(g,[])->g;;
 
 
